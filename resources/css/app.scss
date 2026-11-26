@@ -1,0 +1,206 @@
+// Digital Evidence Vault — design tokens
+//
+// These variables are read by Bootstrap's own Sass source (imported below),
+// so changing a value here changes it everywhere in the app. This is the
+// single place that defines the application's look.
+
+// Typography — matches the font already loaded via Bunny Fonts in vite.config.js
+$font-family-sans-serif: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+$font-size-base: 0.9375rem; // 15px
+
+// Color palette — professional light theme: white/grey surfaces, navy text,
+// one restrained blue accent. No gradients, no decorative colors.
+$primary: #1f4e8c;
+$secondary: #5b6472;
+$success: #1f8a5a;
+$danger: #b3261e;
+$warning: #9a6700;
+$info: #2b7fa3;
+
+$body-bg: #ffffff;
+$body-color: #1a2233;
+$border-color: #e2e5ea;
+$secondary-bg: #f7f8fa;
+
+// Shape — a single flat 2px radius everywhere (buttons, cards, inputs,
+// badges, dropdowns, alerts, the sidebar's "pill" nav links, etc.), instead
+// of Bootstrap's own mismatched default scale (.375rem/.25rem/.5rem/1rem/
+// 2rem/50rem for its six size steps). Overriding every step to the same
+// value is what makes this 100% consistent — a component that reaches for
+// "lg" or "pill" rounding still lands on exactly 2px, not a different one.
+$border-radius: 2px;
+$border-radius-sm: 2px;
+$border-radius-lg: 2px;
+$border-radius-xl: 2px;
+$border-radius-xxl: 2px;
+$border-radius-pill: 2px;
+
+// Two components have their own independent radius variables, not driven
+// by the $border-radius scale above — not used anywhere in this app yet,
+// but overridden too so the project has no inconsistent radius left
+// un-accounted for if either is used later.
+$form-switch-border-radius: 2px;
+$form-range-thumb-border-radius: 2px;
+$form-range-track-border-radius: 2px;
+$form-check-input-border-radius: 2px;
+
+// Shadows — subtle only, never decorative glows.
+$box-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+$box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+
+// Focus ring — Bootstrap's default (0.25rem wide, 25% opacity) is a thick
+// glow that reads as a bug, not a focus state, next to this project's flat
+// 2px radius and restrained shadows. This single variable pair drives every
+// focused control's box-shadow (text inputs, selects, checkboxes, radios,
+// buttons, nav links, pagination — see $input-btn-focus-*, $form-select-
+// focus-box-shadow, $form-check-input-focus-box-shadow in Bootstrap's own
+// source), so overriding it here is what keeps the thin, light ring
+// consistent everywhere instead of patching each component separately.
+$focus-ring-width: 0.1rem;
+$focus-ring-opacity: 0.15;
+
+// Motion — Bootstrap's own interactive transitions (buttons, inputs,
+// selects, nav links, pagination) default to a short, constant-speed
+// linear fade. Swapping in a slightly longer duration and an ease-out
+// curve (quick start, gentle settle) is what makes hovering and clicking
+// around the app feel soft rather than mechanical, without changing what
+// animates — only how it eases. $input-transition's override also
+// reaches $form-select-transition, since Bootstrap defines that one as
+// "$input-transition !default" and sees our value already in place.
+$soft-ease: cubic-bezier(0.4, 0, 0.2, 1);
+$transition-base: all .25s $soft-ease;
+$btn-transition: color .2s $soft-ease, background-color .2s $soft-ease, border-color .2s $soft-ease, box-shadow .2s $soft-ease;
+$nav-link-transition: color .2s $soft-ease, background-color .2s $soft-ease;
+$input-transition: border-color .2s $soft-ease, box-shadow .2s $soft-ease;
+$pagination-transition: color .2s $soft-ease, background-color .2s $soft-ease, border-color .2s $soft-ease, box-shadow .2s $soft-ease;
+
+// Bootstrap's full source, customized by the variables above.
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: $secondary-bg;
+}
+
+// Reusable form-card widths, so a single place controls them instead of
+// repeating "style="max-width: ...px"" inline across views.
+.auth-card {
+    max-width: 420px;
+}
+
+.form-narrow {
+    max-width: 640px;
+}
+
+.form-wide {
+    max-width: 720px;
+}
+
+// The sidebar's logo header and the top navbar sit side by side with a
+// shared border-bottom line between them. Each previously sized itself from
+// its own padding utilities (p-3 vs px-3 py-2) plus whatever its content's
+// font metrics happened to need, so the two heights drifted apart and the
+// border line visibly stepped where they met. A single fixed height (with
+// align-items: center, set per-usage) keeps them pixel-identical.
+$app-topbar-height: 64px;
+
+.app-topbar-height {
+    height: $app-topbar-height;
+}
+
+// Sidebar's active nav item (both the main nav list and the Settings link
+// below it, hence scoping to #sidebar rather than just .nav-pills) — a
+// light tint + bold colored text instead of Bootstrap's default
+// solid-fill "nav-pills" style, to match the rest of the UI's restrained,
+// subtle visual language (outline badges, soft shadows) rather than one
+// heavy solid-blue block standing out from it.
+#sidebar .nav-link.active {
+    background-color: rgba($primary, 0.1);
+    color: $primary;
+    font-weight: 600;
+}
+
+// A card that is itself a link (the dashboard's quick-link cards) lifts
+// slightly on hover, like a physical card being picked up — a concrete,
+// tactile signal that the whole card is clickable, not just its heading.
+a.card {
+    transition: transform .2s $soft-ease, box-shadow .2s $soft-ease;
+}
+
+a.card:hover {
+    transform: translateY(-2px);
+    box-shadow: $box-shadow;
+}
+
+@keyframes soft-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Dropdown menus (the user menu in the topbar) ease in from slightly
+// above instead of snapping to full opacity the instant Bootstrap's JS
+// toggles the .show class.
+.dropdown-menu.show {
+    animation: soft-reveal .18s $soft-ease;
+}
+
+// Session-status alerts (e.g. "Saved.", validation summaries) ease in
+// instead of appearing abruptly, so they read as a direct response to
+// the user's action rather than a sudden layout jump.
+.alert {
+    animation: soft-reveal .25s $soft-ease;
+}
+
+// The page's main content, and the auth card on login/forgot-password/
+// etc., ease in on every navigation, so moving between pages feels like
+// one calm interface instead of a hard flash-to-white reload.
+main,
+.auth-card {
+    animation: soft-reveal .25s $soft-ease;
+}
+
+@keyframes copy-success-pop {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.35);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+// Briefly "pops" a copy-button's icon when copy-button.js swaps it to a
+// checkmark, so the success state reads as a deliberate confirmation
+// rather than the icon just silently changing.
+.copy-pop {
+    animation: copy-success-pop .3s $soft-ease;
+}
+
+// Respects the operating system's "reduce motion" accessibility setting:
+// every animation and transition above collapses to effectively instant
+// for anyone who has asked their system not to animate things.
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
